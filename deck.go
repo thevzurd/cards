@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"io/ioutil"
+	"strings"
+)
 
 // GO is not OO languange.
 // Instead we are going to use type and reciever functions like so
@@ -19,4 +23,38 @@ func (d deck) print() {
 	for i, card := range d {
 		fmt.Println(i, card)
 	}
+}
+
+// This is not a reciever, its a helper function
+func newDeck() deck {
+	cards := deck{}
+	cardSuits := []string{"S", "D", "H", "C"}
+	cardValues := []string{"A", "2", "3"}
+	// _ tells us that there was a variable there which
+	// we are not planning to use, but are still need to show
+	for _, suit := range cardSuits {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+
+	return cards
+}
+
+// This is not a reciever, its a helper function
+// example for returning multiple value from a function
+func deal(d deck, handSize int) (deck, deck) {
+	// Everything up till handsize
+	// from handsize afterwards
+	return d[:handSize], d[handSize:]
+}
+
+// This is a reciever
+func (d deck) toString() string {
+	return strings.Join([]string(d), ",")
+}
+
+func (d deck) saveToFile(filename string) error {
+	// 0666 is a file mode that means anyone can read and write this file
+	return ioutil.WriteFile(filename, []byte(d.toString()), 0666)
 }

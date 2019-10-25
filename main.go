@@ -19,6 +19,7 @@ func main() {
 	   	hand.print()
 	   	remainingDeck.print() */
 	cards.saveToFile("my_cards")
+	//newCards := newDeckFromFile("my_card")
 	// Type Conversation
 	// []byte("Hello World") -> text is converted to byte slice
 

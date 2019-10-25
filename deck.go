@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
+	"os"
 	"strings"
+	"time"
 )
 
 // GO is not OO languange.
@@ -57,4 +60,38 @@ func (d deck) toString() string {
 func (d deck) saveToFile(filename string) error {
 	// 0666 is a file mode that means anyone can read and write this file
 	return ioutil.WriteFile(filename, []byte(d.toString()), 0666)
+}
+
+func newDeckFromFile(filename string) deck {
+	// nil means no value
+	byteSlice, err := ioutil.ReadFile(filename)
+	if err != nil {
+		// option #1 : log the error and return
+		// option #2 : log the error and quit progra
+		// io.Exit(pass an error code)
+		fmt.Println("Error :", err)
+		os.Exit(1)
+	}
+	return deck(strings.Split(string(byteSlice), ","))
+}
+
+func (d deck) shuffle() {
+	// time.Now().UnixNano() gives int64 as seed for source
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+	// we did not mention d in the initial for part
+	for i := range d {
+		// rand function is pseudo random
+		// it uses a seed to generate the random number
+		// each time the program runs, the seed is the same
+		// hence, we notice that the last entry in the rand
+		// is always the same
+		// newPosition := rand.Intn(len(d) - 1)
+		// so we cannot use just rand.
+		// Refer the rand documentation to change the seed
+		// each time
+		newPosition := r.Intn(len(d) - 1)
+		// swapping two variables - buhahaha
+		d[i], d[newPosition] = d[newPosition], d[i]
+	}
 }
